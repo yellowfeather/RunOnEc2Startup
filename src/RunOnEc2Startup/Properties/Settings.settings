@@ -1,0 +1,30 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RunOnEc2Startup.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UserDataAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://169.254.169.254/latest/user-data</Value>
+    </Setting>
+    <Setting Name="Key" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">run-on-startup</Value>
+    </Setting>
+    <Setting Name="Value" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">true</Value>
+    </Setting>
+    <Setting Name="ProcessFileName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Data\cafam-import.bat</Value>
+    </Setting>
+    <Setting Name="InstanceIdAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://169.254.169.254/latest/meta-data/instance-id</Value>
+    </Setting>
+    <Setting Name="AwsAccessKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AwsSecretAccessKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="StopInstanceOnExit" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
