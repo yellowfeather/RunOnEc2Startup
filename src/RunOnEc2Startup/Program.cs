@@ -1,6 +1,7 @@
 ﻿namespace RunOnEc2Startup
 {
   using System;
+  using System.IO;
   using System.Net;
 
   using Amazon;
@@ -8,39 +9,53 @@
 
   using RunOnEc2Startup.Properties;
 
+  using log4net;
+  using log4net.Config;
+
   class Program
   {
     static void Main(string[] args)
     {
-      Console.WriteLine(@"************************");
-      Console.WriteLine(@"*    __  _    _  ___ ");
-      Console.WriteLine(@"*   (  )( \/\/ )/ __)");
-      Console.WriteLine(@"*   /__\ \    / \__ \");
-      Console.WriteLine(@"*  (_)(_) \/\/  (___/");
-      Console.WriteLine(@"* ");
-      Console.WriteLine(@"*  Run On EC2 Startup");
-      Console.WriteLine(@"* ");
-      Console.WriteLine(@"************************");
-      Console.WriteLine(@"");
+      XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
-      var webClient = new WebClient();
-      var instanceId = webClient.DownloadString(Settings.Default.InstanceIdAddress);
-      Console.WriteLine("Instance id: {0}", instanceId);
+      var logger = LogManager.GetLogger(typeof(Program));
 
-      var userData = webClient.DownloadString(Settings.Default.UserDataAddress);
-      Console.WriteLine("User data: {0}", userData);
+      logger.Info(@"************************");
+      logger.Info(@"*    __  _    _  ___ ");
+      logger.Info(@"*   (  )( \/\/ )/ __)");
+      logger.Info(@"*   /__\ \    / \__ \");
+      logger.Info(@"*  (_)(_) \/\/  (___/");
+      logger.Info(@"* ");
+      logger.Info(@"*  Run On EC2 Startup");
+      logger.Info(@"* ");
+      logger.Info(@"************************");
+      logger.Info(@"");
 
-      if (ShouldLaunchProcess(userData))
+      try
       {
-        LaunchProcess();
-      }
+        var webClient = new WebClient();
+        var instanceId = webClient.DownloadString(Settings.Default.InstanceIdAddress);
+        logger.InfoFormat("Instance id: {0}", instanceId);
 
-      if (Settings.Default.StopInstanceOnExit)
+        var userData = webClient.DownloadString(Settings.Default.UserDataAddress);
+        logger.InfoFormat("User data: {0}", userData);
+
+        if (ShouldLaunchProcess(userData))
+        {
+          LaunchProcess();
+        }
+
+        if (Settings.Default.StopInstanceOnExit)
+        {
+          StopInstance(instanceId);
+        }
+
+        logger.Info("Bye");
+      }
+      catch (Exception ex)
       {
-        StopInstance(instanceId);
+        logger.Error("Exception: ", ex);
       }
-
-      Console.WriteLine("Bye");
     }
 
     /// <summary>
@@ -76,8 +91,10 @@
     /// </summary>
     private static void LaunchProcess()
     {
+      var logger = LogManager.GetLogger(typeof(Program));
+
       var processFileName = Settings.Default.ProcessFileName;
-      Console.WriteLine("Launching process: {0}", processFileName);
+      logger.InfoFormat("Launching process: {0}", processFileName);
 
       var process = System.Diagnostics.Process.Start(processFileName);
       if (process != null)
@@ -93,7 +110,9 @@
     /// <param name="instanceId">The instance id.</param>
     private static void StopInstance(string instanceId)
     {
-      Console.WriteLine("Stopping instance");
+      var logger = LogManager.GetLogger(typeof(Program));
+      logger.Info("Stopping instance");
+
       var client = AWSClientFactory.CreateAmazonEC2Client(
         Settings.Default.AwsAccessKey, Settings.Default.AwsSecretAccessKey);
       var request = new StopInstancesRequest { InstanceId = { instanceId } };
