@@ -43,11 +43,11 @@
         if (ShouldLaunchProcess(userData))
         {
           LaunchProcess();
-        }
 
-        if (Settings.Default.StopInstanceOnExit)
-        {
-          StopInstance(instanceId);
+          if (Settings.Default.StopInstanceOnExit)
+          {
+            StopInstance(instanceId);
+          }
         }
 
         logger.Info("Bye");
