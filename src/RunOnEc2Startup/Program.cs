@@ -97,10 +97,16 @@
       logger.InfoFormat("Launching process: {0}", processFileName);
 
       var process = System.Diagnostics.Process.Start(processFileName);
-      if (process != null)
+      if (process == null)
       {
-        const int FiftyMinutes = 1000 * 60 * 50;
-        process.WaitForExit(FiftyMinutes);
+        return;
+      }
+
+      var timeoutMinutes = Settings.Default.ProcessTimeoutMinutes;
+      var timeoutMilliseconds = 1000 * 60 * timeoutMinutes;
+      if (process.WaitForExit(timeoutMilliseconds))
+      {
+        logger.Warn("Timed out waiting for process to exit");
       }
     }
 
